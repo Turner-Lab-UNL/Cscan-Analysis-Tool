@@ -1,0 +1,17 @@
+READ ME
+6.2 Major Updates
+
+The MATLAB GUI for analyzing utwin data has recieved a minor update. 
+The update allows the user to more easily change the pallet scale on c-scan images. 
+
+-The default forces the plot to be betweent the upper and lower image of the region. 
+-The pallet scale text boxes reflect this default range. 
+-The user can enter in any number to change the range of the plot. 
+-If the user does not enter a number, the program sets the input to the max/min of the c-scan plot. 
+
+
+The update also allows the user to insert multiple A-scan and Spectrum plots. The plots are added using
+the insert on the tool bar. The curser tool is used to movet the plots around and change the size. The 
+curser tool should only be used when all other motion buttons are off (like the cross hair function)
+
+Additionally, the draw tool should work on all c-scan images, including the free form tool. 

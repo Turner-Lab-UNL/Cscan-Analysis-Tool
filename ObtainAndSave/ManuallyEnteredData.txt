@@ -1,0 +1,12 @@
+This file allows the user to Manually set the data.
+Using this format means that the user must manually enter in the data every time.
+
+A/D Delay(us): 46
+A/D Width(us): 7
+Scanning Length: 42
+Scanning Resolution: 0.5
+Index Length: 42
+Index Resolution: 0.5
+Waveform Sampling Rate(MHz): 100
+
+First line of Data: 50
