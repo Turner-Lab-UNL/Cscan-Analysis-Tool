@@ -1,3 +1,4 @@
 function SelectRegionRelease(f,~)
-f.WindowButtonMotionFcn={};
+f.WindowButtonMotionFcn = [];
+f.WindowButtonUpFcn     = [];
 end

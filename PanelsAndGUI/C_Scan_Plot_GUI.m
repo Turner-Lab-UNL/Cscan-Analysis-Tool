@@ -23,6 +23,21 @@ else
     set(AxisInfo.Name,'YDir','normal')
     colorbar(AxisInfo.Name);
     colormap(AxisInfo.Name, 'jet');
+
+    % Guard: caxis requires a 2-element strictly-increasing finite vector.
+    % Non-finite or equal limits arise when the data is uniform (min==max)
+    % or contains Inf (e.g. WaveSpeed = 2*d/0).  Fall back to the actual
+    % data range; if that is also degenerate, add a unit offset so the
+    % call never errors.
+    if ~isfinite(limits(1)) || ~isfinite(limits(2)) || limits(1) >= limits(2)
+        lo = min(PlottingMatrix(:));
+        hi = max(PlottingMatrix(:));
+        if ~isfinite(lo) || ~isfinite(hi) || lo >= hi
+            lo = double(~isfinite(lo)) * 0;   % 0 if non-finite
+            hi = lo + 1;
+        end
+        limits = [lo, hi];
+    end
     caxis(AxisInfo.Name,limits)
 end
 end

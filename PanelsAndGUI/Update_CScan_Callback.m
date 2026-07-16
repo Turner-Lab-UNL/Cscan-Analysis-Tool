@@ -46,8 +46,12 @@ figure(f)
                 GateInfo.CurrentGate.CurrentData=GateInfo.CurrentGate.TOF;
             case 3 %'x corr'
                 GateInfo.CurrentGate.CurrentData=Waves.shifted_vector;
-            case 4 %'Wavespeed'
-                GateInfo.CurrentGate.CurrentData=Waves.Wavespeed;
+            case 4 %'Wavespeed' (Wave Speed interface) or 'Attenuation' (Attenuation interface)
+                if strcmpi(WaveTypeHandel.String{4},'Attenuation')
+                    GateInfo.CurrentGate.CurrentData=Waves.Attenuation;
+                else
+                    GateInfo.CurrentGate.CurrentData=Waves.Wavespeed;
+                end
             case 5 %'Time Difference'
                 GateInfo.CurrentGate.CurrentData=Waves.TimeDiff;
             otherwise
@@ -57,38 +61,43 @@ figure(f)
         LowPalletValue=findobj(CPanel,'Tag','LowPalletValue');
         HighPalletValue=findobj(CPanel,'Tag','HighPalletValue');
         
-        %% Updates the fields and Checks if Old numbers are NaN
+        %% Updates the fields — auto-scale when stored limits are absent or invalid
+        % isnan catches uninitialised slots; ~isfinite also catches Inf/-Inf
+        % that can arise from division-by-zero in WaveSpeedCalculator (zero
+        % timeDiff → Inf velocity).  Once Inf is stored, isnan(Inf)=false so
+        % the old code would never re-trigger auto-scale on subsequent calls,
+        % leaving the pallet frozen at 'Inf' and crashing caxis downstream.
         if gco==LowPalletValue
             HighPalletValue.String=num2str(GateInfo.CurrentGate.High(ChooseTypeVal));
-            
+
         elseif gco==HighPalletValue
             LowPalletValue.String=num2str(GateInfo.CurrentGate.Low(ChooseTypeVal));
         else
-            
-            if isnan(GateInfo.CurrentGate.Low(ChooseTypeVal))
+
+            if ~isfinite(GateInfo.CurrentGate.Low(ChooseTypeVal))
                 LowPalletValue.String=num2str(min(min(GateInfo.CurrentGate.CurrentData)));
             else
                 LowPalletValue.String=num2str(GateInfo.CurrentGate.Low(ChooseTypeVal));
             end
-            
-            if isnan(GateInfo.CurrentGate.High(ChooseTypeVal))
+
+            if ~isfinite(GateInfo.CurrentGate.High(ChooseTypeVal))
                 HighPalletValue.String=num2str(max(max(GateInfo.CurrentGate.CurrentData)));
             else
                 HighPalletValue.String=num2str(GateInfo.CurrentGate.High(ChooseTypeVal));
             end
         end
-        
-        
+
+
         GateInfo.CurrentGate.High(ChooseTypeVal)=str2double(HighPalletValue.String);
         GateInfo.CurrentGate.Low(ChooseTypeVal)=str2double(LowPalletValue.String);
- %% Checks if user entered NaN       
-        if isnan(GateInfo.CurrentGate.Low(ChooseTypeVal))
+ %% Checks if user entered a non-finite value (NaN, Inf)
+        if ~isfinite(GateInfo.CurrentGate.Low(ChooseTypeVal))
             LowPalletValue.String=num2str(min(min(GateInfo.CurrentGate.CurrentData)));
         else
             LowPalletValue.String=num2str(GateInfo.CurrentGate.Low(ChooseTypeVal));
         end
-        
-        if isnan(GateInfo.CurrentGate.High(ChooseTypeVal))
+
+        if ~isfinite(GateInfo.CurrentGate.High(ChooseTypeVal))
             HighPalletValue.String=num2str(max(max(GateInfo.CurrentGate.CurrentData)));
         else
             HighPalletValue.String=num2str(GateInfo.CurrentGate.High(ChooseTypeVal));

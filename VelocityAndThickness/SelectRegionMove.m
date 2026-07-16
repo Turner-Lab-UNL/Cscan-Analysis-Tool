@@ -1,9 +1,16 @@
 function SelectRegionMove(~,~,point1,line_box,line,input1,input2)
 
-ax=gca;hold on
+% Use the axes that owns line_box rather than gca.  gca changes whenever
+% the mouse drifts over a different axes (C-scan, ref panel, etc.) and
+% ax.Children(end-4) would then index into the wrong object, throwing an
+% error that silently keeps WindowButtonMotionFcn active and makes the
+% GUI appear unresponsive.
+ax = ancestor(line_box, 'axes');
+if isempty(ax) || ~isvalid(ax), return; end
 
-point2 = get (gca, 'CurrentPoint');
-% point1(1,1)
+hold(ax, 'on')
+
+point2 = get(ax, 'CurrentPoint');
 xmax=max(point1(1,1),point2(1,1));
 xmin=min(point1(1,1),point2(1,1));
 ymax=max(point1(1,2),point2(1,2));
@@ -16,9 +23,10 @@ line_box.YData=[ymin,ymin,ymax,ymax,ymin];
 
 
 %% Obtain Data and Axis Information
-
+if length(ax.Children) < 5, return; end  % guard: fewer objects than expected
 x_values=ax.Children(end-4).XData;
 y_values=ax.Children(end-4).YData;
+if length(x_values) < 2, return; end     % guard: waveform line not yet populated
 x_width=x_values(2)-x_values(1);
 
 %% Locate Cut Regions

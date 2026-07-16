@@ -4,19 +4,18 @@ function FindCrosshairMotion(f,~,Ax,TextHandles,update_function)
 %TextHandles    - handles to text that will be updated
 
 % If the zoom tool is on, don't run the program.
-h=zoom;
-if contains(h.Enable,'on')
-   return 
+h = zoom;
+if isprop(h,'Enable') && (ischar(h.Enable) || isstring(h.Enable)) && strcmpi(h.Enable,'on')
+    return
 end
-h=pan;
-if contains(h.Enable,'on')
-   return 
+h = pan;
+if isprop(h,'Enable') && (ischar(h.Enable) || isstring(h.Enable)) && strcmpi(h.Enable,'on')
+    return
 end
-h=rotate3d;
-if contains(h.Enable,'on')
-   return 
+h = rotate3d;
+if isprop(h,'Enable') && (ischar(h.Enable) || isstring(h.Enable)) && strcmpi(h.Enable,'on')
+    return
 end
-
 
 %% Get Current Point
 C = get (gca, 'CurrentPoint');
@@ -48,6 +47,13 @@ RelLocation =[(Location(1)-XLims(1))/(XLims(2)-XLims(1)),...
 
 % Find all the lines in the axes
 Lines=findobj(Ax.Children,'Tag','CrossHair');
+if ~isvalid(Ax) || isempty(Ax.Children)
+    return
+end
+Lines = findobj(Ax.Children,'Tag','CrossHair');
+if isempty(Lines) || length(Lines) < 2
+    return
+end
 VertLine1=Lines(end);
 HorzLine1=Lines(end-1);
 

@@ -1,6 +1,7 @@
 function CalculateWaveSpeed_Callback(~,~,data_input_h)
 global ScanSettings
 global Waves
+global GateInfo
 
 f=gcf;
 CPanels=findobj(f,'Tag','CPanel');
@@ -52,6 +53,16 @@ end
 % 
 Waves.Wavespeed=velocity;
 Waves.TimeDiff=timeDiff;
+
+% Reset the Velocity/Thickness pallet in every gate before updating so
+% Update_CScan_Callback always auto-scales to the new data range.
+% Without this, a previous bad calculation (e.g. all-Inf velocities) would
+% leave Low(4)/High(4) = Inf; ~isnan(Inf) is true so the stale value is
+% reused, the pallet never refreshes, and caxis([Inf Inf]) crashes.
+for gk = {'g1','g2','g3','g4'}
+    GateInfo.(gk{1}).Low(4)  = NaN;
+    GateInfo.(gk{1}).High(4) = NaN;
+end
 
 choice=findobj(CPanels(1),'Tag','ChooseType');
 choice.Value=4;

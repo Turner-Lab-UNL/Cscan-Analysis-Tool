@@ -33,10 +33,14 @@ delete(findall(f,'tag','Standard.SaveFigure'));
 delete(findall(f,'tag','Standard.FileOpen'));
 delete(findall(f,'tag','Standard.NewFigure'));
 delete(findall(f,'tag','Standard.OpenInspector'));
-hEdit=findall(f,'tag','Standard.EditPlot');
-hEdit.ClickedCallback='CurserCallback(gcbf)';
 addToolbarExplorationButtons(f)
 delete(findall(f,'tag','Exploration.Brushing'));
+hEdit=findall(f,'tag','Standard.EditPlot');
+if ~isempty(hEdit)
+    hEdit.ClickedCallback = 'CurserCallback(gcbf)';
+end
+%hEdit.ClickedCallback='CurserCallback(gcbf)';
+
 
 
 PlotPanel= uipanel('Tag','PlotPanel','BackgroundColor','white',...
@@ -44,6 +48,7 @@ PlotPanel= uipanel('Tag','PlotPanel','BackgroundColor','white',...
 
 FigureAxes = axes(PlotPanel,'Position',[.1,.1,.85,.85]);
 FigureAxes.HitTest='off';
+FigureAxes.Toolbar = [];
 
 % Cross Correlation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 XWindowPanel= uipanel('Tag','CrossCorrPanel','BackgroundColor','white',...

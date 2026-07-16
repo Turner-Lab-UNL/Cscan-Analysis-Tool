@@ -59,3 +59,6 @@ if method_type==1
 else
     output=constant.*timeDiff/2;
 end
+% timeDiff==0 produces Inf velocity; replace with NaN so the colorbar
+% auto-scales cleanly instead of crashing on caxis([Inf Inf]).
+output(~isfinite(output)) = NaN;

@@ -45,8 +45,10 @@ X=X*ScanSettings.scan_res-ScanSettings.scan_res/2;
 Y=Y*ScanSettings.index_res-ScanSettings.index_res/2;
 hold(Ax,'on')
 NewPlot=plot(Ax,X,Y,'*');
-NewPlot.Color=[1 1 1];
-NewPlot.Tag='AddedRegionPoints';
+if ~isempty(NewPlot)
+    NewPlot.Color = [1 1 1];
+    NewPlot.Tag = 'AddedRegionPoints';
+end
 hold(Ax,'off')
 
 if plot_number==1

@@ -1,0 +1,7 @@
+# OS cruft
+.DS_Store
+
+# Scan data / calibration files (large, sample-specific, not code)
+*.csv
+Vmax_cu75/
+Vmax_silica/

@@ -1,4 +1,3 @@
-
 function CalculateWaveSpeed_GUI
 global ScanSettings
 global GateInfo
@@ -26,10 +25,14 @@ delete(findall(f,'tag','Standard.SaveFigure'));
 delete(findall(f,'tag','Standard.FileOpen'));
 delete(findall(f,'tag','Standard.NewFigure'));
 delete(findall(f,'tag','Standard.OpenInspector'));
-hEdit=findall(f,'tag','Standard.EditPlot');
-hEdit.ClickedCallback='CurserCallback(gcbf)';
 addToolbarExplorationButtons(f)
 delete(findall(f,'tag','Exploration.Brushing'));
+hEdit=findall(f,'tag','Standard.EditPlot');
+if ~isempty(hEdit)
+    hEdit.ClickedCallback = 'CurserCallback(gcbf)';
+end
+
+
 
 CreateCScanPannel(f);
 CPanels=findobj(f,'Tag','CPanel');

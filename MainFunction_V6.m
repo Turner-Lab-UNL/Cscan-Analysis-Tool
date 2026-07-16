@@ -27,6 +27,9 @@ global ax_A_Vector
 global ax_C_Vector
 global ax_F_Vector
 
+global RefWaves 
+global RefScanSettings 
+global CurrentFolderRef
 % mfilename
 filename=mfilename('fullpath');
 [filepath] = fileparts(filename);
@@ -41,8 +44,8 @@ addpath(fullfile(filepath,'ObtainAndSave'));
 addpath(fullfile(filepath,'Settings'));
 addpath(fullfile(filepath,'PanelsAndGUI'));
 addpath(fullfile(filepath,'VarianceLocationsFcns'));
-
 addpath(fullfile(filepath,'VelocityAndThickness'));
+addpath(fullfile(filepath,'Attenuation'));
 
 ProgramName='C-Scan Plot Interface';
 
@@ -80,6 +83,10 @@ ScanSettings=ScanParameters();
 Waves=WaveMatrices();
 xCorrSettings=CrossCorParameters();
 
+RefScanSettings=ScanParameters();
+RefWaves=WaveMatrices();
+CurrentFolderRef=pwd;
+
 SelectRegionCount=1;
 GateInfo.CurrentGate.MouseClick=0;
 CurrentFolder=pwd;
@@ -111,6 +118,7 @@ hFileMenu = uimenu(f, 'Text', 'File','Tag','figMenuFile');
 hAllMenuItems = allchild(hFileMenu);
 delete(hAllMenuItems)
 hLoadMenu = uimenu('Label','Load Data', 'Parent',hFileMenu);
+hLoadRefMenu = uimenu('Label','Load Reference Data', 'Parent',hFileMenu);
 hSaveMenu = uimenu('Label','Save Data', 'Parent',hFileMenu);
 
 delete(findall(f,'tag','Annotation.InsertLegend'));
@@ -134,6 +142,7 @@ hFunctionsMenu = uimenu(f,'Text','Functions','Tag','figMenuFunctions');
 hGateSettings = uimenu(hFunctionsMenu,'Text','GateSettings','Callback',@GateSettings_Callback);
 hXCorr = uimenu(hFunctionsMenu,'Text','Waveform Alignment','Callback',@CrossCorr_Callback);
 hWaveSpeed = uimenu(hFunctionsMenu,'Text','Wavespeed','Callback',@Wavespeed_Callback);
+hAttenuation = uimenu(hFunctionsMenu,'Text','Attenuation','Callback',@Attenuation_Callback);
 hSettings = uimenu(hFunctionsMenu,'Text','Settings','Callback',@SetSettings_Callback);
 
 % hRecentMenu = uimenu('Label','Recent Data', 'Parent',hFileMenu);
@@ -165,9 +174,13 @@ FileNameBox = uicontrol('Style','text','String','File Name',...
     'HorizontalAlignment','left','Units','normalized',...
     'Position',[.005,.005,.765,.04],'background',[0.8 0.8 0.8]);
 
+RefFileNameBox = uicontrol('Style','text','String','Reference File Name',...
+    'HorizontalAlignment','left','Units','normalized',...
+    'Position',[.005,.045,.765,.04],'background',[0.8 0.8 0.8]);
+
 MessageBox.HitTest='off';
 FileNameBox.HitTest='off';
-
+RefFileNameBox.HitTest='off';
 
 %% Create A and C Scan Panels %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 [AScanAxes,APanel]=CreateAScanPannel(f);
@@ -194,6 +207,7 @@ ax_C_Vector{1}=CScanAxes;
 
 %% Load and Save Data  %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 set(hLoadMenu, 'Callback',{@SelectData_Callback,FileNameBox,MessageBox,ax_C_Vector,ax_A_Vector});
+set(hLoadRefMenu, 'Callback',{@LoadReferenceData_Callback,RefFileNameBox,MessageBox});
 set(hSaveMenu, 'Callback',{@SaveAsMat_Callback,FileNameBox,MessageBox});
 
 
@@ -284,7 +298,22 @@ f.Visible = 'on';
             StringChange.String={'Amp','TOF','Aligment','Velocity','TimeDiff'};
         end
     end
-
+ function Attenuation_Callback(~,~)
+        h=findobj('Name','Calculate Attenuation Interface');
+        if isempty(h)
+            CalculateAttenuation_GUI
+        else
+            figure(h)
+        end
+ 
+        CPanels=findobj('Tag','CPanel');
+        n=length(CPanels);
+        for i=1:n
+            CPanel_loop=CPanels(i);
+            StringChange=findobj(CPanel_loop,'Tag','ChooseType');
+            StringChange.String={'Amp','TOF','Aligment','Attenuation','TimeDiff'};
+        end
+    end
     function InsertC(~,~)
         [CScanAxes_temp,CPanel_temp]=CreateCScanPannel(f);
         CPanel_temp.Position=[.25, .25, .4, .4];

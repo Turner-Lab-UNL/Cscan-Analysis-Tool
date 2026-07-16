@@ -6,7 +6,7 @@ scan_len=ScanSettings.scan_len;
 index_res=ScanSettings.index_res;
 index_len=ScanSettings.index_len;
 index_per_row=ScanSettings.IndexPerRow;
-index_per_column=ScanSettings.IndexPerRow;
+index_per_column=ScanSettings.IndexPerColumn;
 
 switch Val
     case 1 % Point
