@@ -1,6 +1,5 @@
 function Freq_Scan_Plot_GUI(AxisInfo,WaveformLine,xdata)
 
-figure(AxisInfo.Number);
 AxisInfo.Name.NextPlot='replacechildren';
 
 cross_lines=findobj(AxisInfo.Name,'Tag','CrossHair');

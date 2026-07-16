@@ -2,7 +2,6 @@ function A_Scan_Plot_GUI(AxisInfo,WaveformLine,current_index)
 global ScanSettings
 global GateInfo
 
-figure(AxisInfo.Number);
 GColor=zeros(4,3);
 GThickness=zeros(4,1);
 Gs=zeros(4,1);
